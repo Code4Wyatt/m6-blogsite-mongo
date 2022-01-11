@@ -8,19 +8,28 @@ blogsRouter.post("/", async (req, res, next) => {
     try {
         const newBlog = new BlogModel(req.body);
         const { _id } = await newBlog.save();
-
         res.status(201).send({ _id });
     } catch (error) {
         console.log(error)
     }
-});
+})
 
 blogsRouter.get("/", async (req, res, next) => {
     try {
-        const allBlogs = await BlogModel.find();
+        const allBlogs = await BlogModel.find()
         res.send(allBlogs)
     } catch (error) {
-        console.log(error);
+        console.log(error)
+    }
+})
+
+blogsRouter.get("/:blogId", async (req, res, next) => {
+    try {
+        const blogId = req.params.blogId
+        const singleBlog = await BlogModel.findById(blogId)
+        res.send(singleBlog)
+    } catch (error) {
+        console.log(error)
     }
 })
 

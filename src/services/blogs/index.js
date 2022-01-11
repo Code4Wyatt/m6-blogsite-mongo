@@ -10,7 +10,7 @@ blogsRouter.post("/", async (req, res, next) => {
         const { _id } = await newBlog.save();
         res.status(201).send({ _id });
     } catch (error) {
-        console.log(error)
+        next(error)
     }
 })
 
@@ -19,7 +19,7 @@ blogsRouter.get("/", async (req, res, next) => {
         const allBlogs = await BlogModel.find()
         res.send(allBlogs)
     } catch (error) {
-        console.log(error)
+        next(error)
     }
 })
 
@@ -29,7 +29,7 @@ blogsRouter.get("/:blogId", async (req, res, next) => {
         const singleBlog = await BlogModel.findById(blogId)
         res.send(singleBlog)
     } catch (error) {
-        console.log(error)
+        next(error)
     }
 })
 
@@ -43,7 +43,7 @@ blogsRouter.put("/:blogId", async (req, res, next) => {
             next(createHttpError(404, `Blog with id ${blogId} not found!`))
           }
     } catch (error) {
-        console.log(error)
+        next(error)
     }
 })
 
@@ -57,7 +57,7 @@ blogsRouter.delete("/:blogId", async (req, res, next) => {
             next(createHttpError(404, `Blog with id ${blogId} not found.`))
           }
     } catch (error) {
-        console.log(error)
+        next(error)
     }
 })
 

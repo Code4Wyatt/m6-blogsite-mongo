@@ -2,10 +2,13 @@ import express from "express"
 import cors from "cors"
 import listEndpoints from "express-list-endpoints"
 import mongoose from "mongoose"
+import usersRouter from "./services/users/index.js"
+import blogsRouter from "./services/blogs/index.js"
+import {badRequestHandler, genericErrorHandler, notFoundHandler} from "../src/errorHandlers.js"
 
 const server = express()
 
-const port = process.env.PORT || 5001;
+const port = process.env.PORT || 5001
 
 // Middlewares //
 
@@ -13,6 +16,9 @@ server.use(cors())
 server.use(express.json())
 
 // Routes //
+
+server.use("/users", usersRouter)
+server.use("/blogs", blogsRouter)
 
 // Error Handlers //
 
@@ -34,3 +40,5 @@ mongoose.connection.on("connected", () => {
 mongoose.connection.on("error", error => {
     console.log(error)
 })
+
+export default server;

@@ -1,4 +1,3 @@
-import e from "express";
 import express from "express"
 import createHttpError from "http-errors"
 import BlogModel from "./schema.js"
@@ -45,7 +44,7 @@ blogsRouter.post("/blogPosts/:id", async (req, res, next) => {
 
 blogsRouter.get("/", async (req, res, next) => {
     try {
-        const allBlogs = await BlogModel.find()
+        const allBlogs = await BlogModel.find() // .limit(2) to limit to 2 results for example
         res.send(allBlogs)
     } catch (error) {
         next(error)

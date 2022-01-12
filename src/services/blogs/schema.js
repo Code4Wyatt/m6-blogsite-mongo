@@ -5,11 +5,12 @@ const { Schema, model } = mongoose
 const CommentSchema = new Schema({
     comment: { type: String, required: true },
     user: { 
-        name: { type: String},
-        avatar: { type: String},
+        type: Object,
+        name: { type: String, required: true },
+        avatar: { type: String },
     },
 },
-{timestamps: true}
+{timestamps: true},
 )
 
 const blogSchema = new Schema({

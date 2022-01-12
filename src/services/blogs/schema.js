@@ -5,8 +5,8 @@ const { Schema, model } = mongoose
 const CommentSchema = new Schema({
     comment: { type: String, required: true },
     user: { 
-        name: { type: String, required: true},
-        avatar: { type: String, required: true },
+        name: { type: String},
+        avatar: { type: String},
     },
 },
 {timestamps: true}

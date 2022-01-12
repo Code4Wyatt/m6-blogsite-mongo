@@ -77,6 +77,26 @@ blogsRouter.get("/blogPosts/:id/comments", async (req, res, next) => {
     }
 })
 
+// Get Blog Comment 
+
+blogsRouter.get("/blogPosts/:blogId/comments/:commentId", async( req, res, next) => {
+    try {
+        const blogPost = await BlogModel.findById(req.params.blogId)
+        if (blogPost) {
+            const selectedComment = blogPost.comments.find(comment => comment._id.toString() === req.params.commentId)
+            if (selectedComment) {
+                res.send(selectedComment)
+            } else {
+                next(createHttpError(404, `Comment with id ${req.params.commentId} not found.`))
+            }
+        } else {
+            next(createHttpError(404, `Blog with id ${blogId} not found.`))
+        }
+    } catch (error) {
+        next(error)
+    }
+})
+
 // Edit Blog Comment
 
 blogsRouter.put("/blogPosts/:blogId/comment/:commentId", async (req, res, next) => {

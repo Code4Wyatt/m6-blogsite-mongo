@@ -20,55 +20,24 @@ blogsRouter.post("/", async (req, res, next) => {
 
 blogsRouter.post("/blogPosts/:id", async (req, res, next) => {
     try {
-       
-        const blogToComment = await BlogModel.findById(req.body.blogId)
-        
-        if (blogToComment) {
-            const commentToInsert = { ...blogToComment.toObject(), dateCommented: new Date() }
-            console.log(commentToInsert)
-
-            const updatedBlog = await BlogModel.findByIdAndUpdate(
-                req.params.blogId,
-                { $push: { comments: commentToInsert }},
-                { new: true }
+      const blogToComment = await BlogModel.findById(req.params.id);
+      if(!blogToComment) {
+          res.status(404).send({ message: `Blog with ${req.params.id} not found.`});
+      } else {
+          console.log(req.body)
+          await BlogModel.findByIdAndUpdate(req.params.id,
+            {
+                $push: { comments: req.body,
+                },
+            },
+            { new: true }
             )
-            if (updatedBlog) {
-                res.send(updatedBlog)
-            } else {
-                next(createHttpError(404, `Blog with id ${blogId} not found!`))
-            }
-        } else {
-            next(createHttpError(404, `Blog with id ${blogId} not found!`))
-        }
-    } catch (error) {
-        
-    }
-    
-    
-    // try {
-    //     const blogId = req.params.id
-    //     const blogToComment = await BlogModel.findById(blogId)
-    //     if (blogToComment) {
-    //         const newComment = { ...blogToComment.toObject(), date: new Date()}
-    //         console.log(newComment)
-    //         res.send(newComment)
-
-    //         const updatedBlog = await BlogModel.findByIdAndUpdate(
-    //             req.params.userId,
-    //             { $push: { comment: newComment }},
-    //             { new: true }
-    //         )
-    //         if (updatedBlog) {
-    //             res.send(updatedBlog)
-    //         } else {
-    //             next(createHttpError(404, `Blog with id ${req.body._id} not found!`))
-    //         }
-    //     } else {
-    //         next(createHttpError(404, `Blog with id ${req.body._id} not found!`))
-    //     }
-    // } catch (error) {
-    //     next(error)
-    // }
+            res.status(204).send();
+      } 
+      } catch (error) {
+        console.log(error);
+        next(error)
+      }
 })
 
 // Get Blogs

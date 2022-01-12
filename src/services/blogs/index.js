@@ -1,3 +1,4 @@
+import e from "express";
 import express from "express"
 import createHttpError from "http-errors"
 import BlogModel from "./schema.js"
@@ -115,14 +116,6 @@ blogsRouter.put("/:blogId", async (req, res, next) => {
     }
 })
 
-// blogsRouter.delete("/blogPosts/:id/comment/:commentId", async (req, res, next) => {
-//     try {
-//         const 
-//     } catch (error) {
-        
-//     }
-// })
-
 blogsRouter.delete("/:blogId", async (req, res, next) => {
     try {
         const blogId = req.params.blogId
@@ -137,6 +130,19 @@ blogsRouter.delete("/:blogId", async (req, res, next) => {
     }
 })
 
+// Delete Blog Comment
 
+blogsRouter.delete("/blogPosts/:blogId/comment/:commentId", async (req, res, next) => {
+    try {
+        const deletedBlogComment = await BlogModel.findByIdAndUpdate(req.params.blogId, {$pull: { comments: { _id: req.params.commentId }}}, { new: true })
+        if (deletedBlogComment) {
+            res.send(deletedBlogComment)
+        } else {
+            next(createHttpError(404, `Blog with id ${req.params.blogId} not found`))
+        }
+    } catch (error) {
+        next(error)
+    }
+})
 
 export default blogsRouter

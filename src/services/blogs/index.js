@@ -79,7 +79,7 @@ blogsRouter.get("/blogPosts/:id/comments", async (req, res, next) => {
 
 // Get Blog Comment 
 
-blogsRouter.get("/blogPosts/:blogId/comments/:commentId", async( req, res, next) => {
+blogsRouter.get("/blogPosts/:blogId/comments/:commentId", async (req, res, next) => {
     try {
         const blogPost = await BlogModel.findById(req.params.blogId)
         if (blogPost) {

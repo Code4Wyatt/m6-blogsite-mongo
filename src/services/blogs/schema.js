@@ -31,7 +31,7 @@ const blogSchema = new Schema({
             }, 
         }, 
     },
-    author: [{ type: Schema.Types.ObjectId, ref: "Author" }],
+    authors: [{ type: Schema.Types.ObjectId, ref: "Author" }],
     content: {
         type: String, 
         required: true,

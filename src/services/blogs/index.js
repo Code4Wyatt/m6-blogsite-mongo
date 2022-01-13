@@ -57,7 +57,7 @@ blogsRouter.get("/", async (req, res, next) => {
 blogsRouter.get("/:blogId", async (req, res, next) => {
     try {
         const blogId = req.params.blogId
-        const singleBlog = await BlogModel.findById(blogId).populate({ path: "authors", select: "firstName lastName" })
+        const singleBlog = await BlogModel.findById(blogId).populate({ path: "authors" })
         if(singleBlog) {
             res.send(singleBlog) 
         } else {

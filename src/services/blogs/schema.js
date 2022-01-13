@@ -31,7 +31,7 @@ const blogSchema = new Schema({
             }, 
         }, 
     },
-    authors: [{ type: Schema.Types.ObjectId, ref: "Author" }],
+    authors: [{ type: Schema.Type.ObjectId, ref: "Author" }],
     content: {
         type: String, 
         required: true,
@@ -41,12 +41,5 @@ const blogSchema = new Schema({
 },
 { timestamps: true },
 )
-
-blogSchema.static("findBookWithAuthors", async function (query) {
-    const total = await this.countDocuments(query.criteria)
-    const books = await this.find(query.criteria).limit(query.options.limit || 10).skip(query.options.skip || 0).sort(query.options.sort).populate({ path: "authors", select: "firstName lastName" })
-
-    return { total, books }
-})
 
 export default model("Blog", blogSchema)

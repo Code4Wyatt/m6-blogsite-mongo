@@ -45,7 +45,7 @@ blogsRouter.post("/blogPosts/:id", async (req, res, next) => {
 
 blogsRouter.get("/", async (req, res, next) => {
     try {
-        const allBlogs = await BlogModel.find().populate({ path: "author" }) // .limit(2) to limit to 2 results for example
+        const allBlogs = await BlogModel.find().populate({ path: "authors" }) // .limit(2) to limit to 2 results for example
         res.send(allBlogs)
     } catch (error) {
         next(error)

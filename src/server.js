@@ -4,6 +4,7 @@ import listEndpoints from "express-list-endpoints"
 import mongoose from "mongoose"
 import usersRouter from "./services/users/index.js"
 import blogsRouter from "./services/blogs/index.js"
+import authorsRouter from "./services/authors/index.js"
 import {badRequestHandler, genericErrorHandler, notFoundHandler} from "../src/errorHandlers.js"
 
 const whiteList = [process.env.FE_LOCAL_URL, process.env.FE_REMOTE_URL]
@@ -32,6 +33,7 @@ server.use(express.json())
 
 server.use("/users", usersRouter)
 server.use("/blogs", blogsRouter)
+server.use("/authors", authorsRouter)
 
 // Error Handlers //
 

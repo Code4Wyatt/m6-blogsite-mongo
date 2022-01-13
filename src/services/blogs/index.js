@@ -36,7 +36,7 @@ blogsRouter.post("/blogPosts/:id", async (req, res, next) => {
       } 
       } catch (error) {
         console.log(error);
-        
+        next(error);
       }
 })
 

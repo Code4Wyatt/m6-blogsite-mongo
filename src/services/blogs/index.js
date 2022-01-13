@@ -1,6 +1,7 @@
 import express from "express"
 import createHttpError from "http-errors"
 import BlogModel from "./schema.js"
+import AuthorModel from "../authors/schema.js"
 
 const blogsRouter = express.Router();
 
@@ -44,7 +45,7 @@ blogsRouter.post("/blogPosts/:id", async (req, res, next) => {
 
 blogsRouter.get("/", async (req, res, next) => {
     try {
-        const allBlogs = await BlogModel.find() // .limit(2) to limit to 2 results for example
+        const allBlogs = await BlogModel.find().populate({ path: "authors", select: "firstName lastName" }) // .limit(2) to limit to 2 results for example
         res.send(allBlogs)
     } catch (error) {
         next(error)
@@ -56,8 +57,12 @@ blogsRouter.get("/", async (req, res, next) => {
 blogsRouter.get("/:blogId", async (req, res, next) => {
     try {
         const blogId = req.params.blogId
-        const singleBlog = await BlogModel.findById(blogId)
-        res.send(singleBlog)
+        const singleBlog = await BlogModel.findById(blogId).populate({ path: "authors" })
+        if(singleBlog) {
+            res.send(singleBlog) 
+        } else {
+            next(createHttpError(404, `Blog post with id ${req.params.blogId} not found.`))
+        }
     } catch (error) {
         next(error)
     }

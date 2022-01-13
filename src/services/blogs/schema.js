@@ -31,25 +31,13 @@ const blogSchema = new Schema({
             }, 
         }, 
     },
-    author: { 
-        type: Object, 
-        required: true,
-        nested: {
-            name: {
-                type: String, 
-                required: true,
-            },
-            avatar: { 
-                type: String, 
-                required: true,
-            },
-        },
-    },
+    authors: [{ type: Schema.Types.ObjectId, ref: "Author" }],
     content: {
         type: String, 
         required: true,
     },
     comments: { default: [], type: [CommentSchema]},
+    
 },
 { timestamps: true },
 )

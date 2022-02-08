@@ -39,4 +39,19 @@ UserSchema.methods.toJSON = function () {
     return userObject
 }
 
-export default model("User", UserSchema);
+UserSchema.statics.checkCredentials = async function () {
+    const user = await this.findOne({ email }) // find the user by email, using this in a normal function to target the schema in this file
+
+    if (user) {
+        const isMatch = await bcrypt.compare(plainPW, user.password)
+        if (isMatch) {
+            return user
+        } else {
+            return null
+        }
+    } else {
+        return null
+    }
+}
+
+export default model("User", UserSchema)

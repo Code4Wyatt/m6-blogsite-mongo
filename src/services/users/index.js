@@ -1,6 +1,8 @@
 import express from "express"
 import createHttpError from "http-errors"
 import UsersModel from "./schema.js"
+import { basicAuthMiddleware } from "../../auth/basic.js"
+import { adminOnlyMiddleware } from "../../auth/admin.js"
 
 const usersRouter = express.Router()
 
@@ -14,7 +16,7 @@ usersRouter.post("/", async (req, res, next) => {
   }
 })
 
-usersRouter.get("/", async (req, res, next) => {
+usersRouter.get("/", basicAuthMiddleware, adminOnlyMiddleware, async (req, res, next) => {
   try {
     const users = await UsersModel.find()
     res.send(users)
@@ -23,7 +25,7 @@ usersRouter.get("/", async (req, res, next) => {
   }
 })
 
-usersRouter.get("/:userId", async (req, res, next) => {
+usersRouter.get("/:userId", basicAuthMiddleware, async (req, res, next) => {
   try {
     const userId = req.params.userId
 
@@ -38,7 +40,7 @@ usersRouter.get("/:userId", async (req, res, next) => {
   }
 })
 
-usersRouter.put("/:userId", async (req, res, next) => {
+usersRouter.put("/:userId", basicAuthMiddleware, async (req, res, next) => {
   try {
     const userId = req.params.userId
     const updatedUser = await UsersModel.findByIdAndUpdate(userId, req.body, { new: true }) // by default findByIdAndUpdate returns the document pre-update, if I want to retrieve the updated document, I should use new:true as an option
@@ -52,7 +54,7 @@ usersRouter.put("/:userId", async (req, res, next) => {
   }
 })
 
-usersRouter.delete("/:userId", async (req, res, next) => {
+usersRouter.delete("/:userId", basicAuthMiddleware, async (req, res, next) => {
   try {
     const userId = req.params.userId
     const deletedUser = await UsersModel.findByIdAndDelete(userId)

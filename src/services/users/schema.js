@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
 const { Schema, model } = mongoose;
 
@@ -9,6 +10,7 @@ const UserSchema = new Schema(
     email: { type: String, required: true },
     dateOfBirth: { type: Date, required: true },
     role: { type: String, enum: ["User", "Admin"], default: "User" },
+    password: { type: String, required: true },
     topics_covered: [String],
   },
   {
@@ -17,12 +19,12 @@ const UserSchema = new Schema(
 );
 
 UserSchema.pre("save", async function (next) {
-    // before saving the user in the database, hash the password and
+    // before saving the user in the database, hash the password
     const newUser = this
     const plainPW = newUser.password
 
     if (newUser.isModified("password")) {
-        const hash = await bcrpyt.hash(plainPW, 10)
+        const hash = await bcrypt.hash(plainPW, 10)
         newUser.password = hash
     }
 
@@ -39,7 +41,7 @@ UserSchema.methods.toJSON = function () {
     return userObject
 }
 
-UserSchema.statics.checkCredentials = async function () {
+UserSchema.statics.checkCredentials = async function (email, plainPW) {
     const user = await this.findOne({ email }) // find the user by email, using this in a normal function to target the schema in this file
 
     if (user) {

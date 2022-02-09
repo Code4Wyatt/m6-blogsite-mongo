@@ -3,10 +3,14 @@ import createHttpError from "http-errors"
 import UsersModel from "./schema.js"
 import { basicAuthMiddleware } from "../../auth/basic.js"
 import { adminOnlyMiddleware } from "../../auth/admin.js"
+import bcrypt from "bcrypt"
+import JWT from "jsonwebtoken"
 
 const usersRouter = express.Router()
 
-usersRouter.post("/", async (req, res, next) => {
+usersRouter.post("/", [
+  check("email", "Please enter a valid email address").isEmail(),check("password", "Please input a valid password").isLength({min: 6})
+] async (req, res, next) => {
   try {
     const newUser = new UsersModel(req.body) 
     const { _id } = await newUser.save() 

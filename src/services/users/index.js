@@ -4,8 +4,8 @@ import UsersModel from "./schema.js";
 import { basicAuthMiddleware } from "../../auth/basic.js";
 import { adminOnlyMiddleware } from "../../auth/admin.js";
 import { check, validationResult } from "express-validator";
-import { JWTAuthMiddleware } from "../auth/token.js"
-import { JWTAuthenticate } from "../auth/tools.js"
+import { JWTAuthMiddleware } from "../../auth/token.js";
+import { JWTAuthenticate } from "../../auth/tools.js";
 
 const usersRouter = express.Router();
 
@@ -22,6 +22,15 @@ usersRouter.post(
     try {
       const newUser = new UsersModel(req.body);
       const { _id } = await newUser.save();
+
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        return res.status(422).json({
+          errors: errors.array(),
+        });
+      }
+
       res.status(201).send({ _id });
     } catch (error) {
       next(error);
@@ -90,20 +99,20 @@ usersRouter.delete("/:userId", basicAuthMiddleware, async (req, res, next) => {
 
 usersRouter.post("/login", async (req, res, next) => {
   try {
-    const { email, password } = req.body // Get credentials from req.body
-    
-    const user = await UsersModel.checkCredentials(email, password) // Verify the credentials
+    const { email, password } = req.body; // Get credentials from req.body
+
+    const user = await UsersModel.checkCredentials(email, password); // Verify the credentials
 
     if (user) {
       // If credentials are fine we will generate a JWT token
-      const accessToken = await JWTAuthenticate(user)
-      res.send({ accessToken })
+      const accessToken = await JWTAuthenticate(user);
+      res.send({ accessToken });
     } else {
-      next(createHttpError(401, "Invalid Credentials!"))
+      next(createHttpError(401, "Invalid Credentials!"));
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
-})
+});
 
 export default usersRouter;

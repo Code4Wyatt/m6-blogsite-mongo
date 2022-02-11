@@ -1,11 +1,12 @@
 import express from "express";
 import createHttpError from "http-errors";
 import UsersModel from "./schema.js";
+import passport from "passport"
 import { basicAuthMiddleware } from "../../auth/basic.js";
 import { adminOnlyMiddleware } from "../../auth/admin.js";
 import { check, validationResult } from "express-validator";
 import { JWTAuthMiddleware } from "../../auth/token.js";
-import { JWTAuthenticate } from "../../auth/tools.js";
+import { JWTAuthenticate, verifyRefreshTokenAndGenerateNewTokens } from "../../auth/tools.js";
 
 const usersRouter = express.Router();
 

@@ -11,18 +11,12 @@ import { JWTAuthenticate, verifyRefreshTokenAndGenerateNewTokens } from "../../a
 const usersRouter = express.Router();
 
 usersRouter.post(
-  "/",
-  [
-    check("email", "Please input a valid email").isEmail(),
-    check(
-      "password",
-      "Please input a password with a min length of 6"
-    ).isLength({ min: 6 }),
-  ],
+  "/register",
   async (req, res, next) => {
     try {
       const newUser = new UsersModel(req.body);
       const { _id } = await newUser.save();
+      delete newUser._doc.password
 
       const errors = validationResult(req);
 
@@ -32,7 +26,8 @@ usersRouter.post(
         });
       }
 
-      res.status(201).send({ _id });
+      const token = await JWTAuthenticate({ id: newUser._id })
+      res.status(201).send({ _id, token });
     } catch (error) {
       next(error);
     }
@@ -107,7 +102,7 @@ usersRouter.post("/login", async (req, res, next) => {
     if (user) {
       // If credentials are fine we will generate a JWT token
       const accessToken = await JWTAuthenticate(user);
-      res.send({ accessToken });
+      res.status(200).send({ accessToken });
     } else {
       next(createHttpError(401, "Invalid Credentials!"));
     }

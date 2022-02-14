@@ -1,5 +1,5 @@
 import express from "express";
-import AuthorModel from "../authors/schema.js";
+import UserModel from "../users/index.js";
 import { generateJwt } from "../utils/auth/jwt.js";
 
 const authRouter = express.Router();
@@ -16,7 +16,7 @@ authRouter.post('/login', async (req, res, next) => {
             throw error
         }
 
-        const user = await AuthorModel.findByCredentials(email, password)
+        const user = await UserModel.findByCredentials(email, password)
 
         if (!user) {
             const error = new Error("No email/password match.")

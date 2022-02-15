@@ -1,9 +1,9 @@
 import passport from "passport"
-import GoogleStategy from "passport-google-oauth20"
+import GoogleStrategy from "passport-google-oauth20"
 import UsersModel from "../services/users/schema.js"
 import { JWTAuthenticate } from "./tools.js"
 
-const googleStrategy = new GoogleStrategy(
+export const googleStrategy = new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_OAUTH_ID,
       clientSecret: process.env.GOOGLE_OAUTH_SECRET,
@@ -48,4 +48,3 @@ const googleStrategy = new GoogleStrategy(
     passportNext(null, data)
   })
   
-  export default googleStrategy

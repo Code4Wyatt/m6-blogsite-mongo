@@ -1,5 +1,6 @@
 type RoleType = "Admin" | "Moderator" | "Author" | "User"
 
+// Convert Objects to their own interfaces to be used inside any interface needed
 
 interface User {
     firstName: string;
@@ -10,6 +11,7 @@ interface User {
     password: string;
     topics_covered: string;
     tokens: string;
+    checkCredentials: Promise<User | null>;
 }
 
 interface Blog {

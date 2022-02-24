@@ -75,8 +75,10 @@ blogsRouter.get("/blogPosts/:id/comments", async (req, res, next) => {
         const blog = await BlogModel.findById(req.params.id);
         if (!blog) {
             res.status(404).send({ message: `Blog with ${req.params.id} not found.`});
+        } else {
+            res.send(blog.comments);
         }
-        res.send(blog.comments);
+       
     } catch (error) {
         next(error)
     }
@@ -95,7 +97,7 @@ blogsRouter.get("/blogPosts/:blogId/comments/:commentId", async (req, res, next)
                 next(createHttpError(404, `Comment with id ${req.params.commentId} not found.`))
             }
         } else {
-            next(createHttpError(404, `Blog with id ${blogId} not found.`))
+            next(createHttpError(404, `Blog with id ${req.params.blogId} not found.`))
         }
     } catch (error) {
         next(error)
@@ -118,7 +120,7 @@ blogsRouter.put("/blogPosts/:blogId/comment/:commentId", async (req, res, next) 
                next(createHttpError(404, `Comment with id ${req.params.commentId} not found`))
            }
        } else {
-           next(createHttpError(404, `Blog with id ${blogId} not found`))
+           next(createHttpError(404, `Blog with id ${req.params.blogId} not found`))
        }
     } catch (error) {
         console.log(error)

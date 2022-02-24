@@ -25,7 +25,7 @@ authRouter.post('/login', async (req, res, next) => {
             throw error
         }
 
-        const token = await generateJwt({ id: user._id })
+        const token = await JWTAuthMiddleware({ id: user._id })
 
         res.status(200).send({ token })
     } catch (error) {

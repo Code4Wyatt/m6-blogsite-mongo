@@ -25,8 +25,10 @@ interface Blog {
 }
 
 interface Comment {
+    _id: string;
     comment: string;
     user: Object;
+    toObject(): Function
 }
 
 interface Author {

@@ -1,51 +1,66 @@
-import express from "express";
-import UserModel from "../users/index.js";
-import { JWTAuthMiddleware } from "../../auth/token";
+import bcrypt from "bcrypt";
+import UserModel from "../users/schema";
+import {
+  JWTAuthenticate,
+  verifyRefreshTokenAndGenerateNewTokens,
+} from "../../auth/tools.js";
+import { Router } from "express";
+import createHttpError from "http-errors"
 
-const authRouter = express.Router();
+const authRouter = Router();
 
-authRouter.post('/login', async (req, res, next) => {
-
-    try {
-        const { email, password } = req.body
-
-        if (!email || !password) {
-            const error = new Error("Missing credentials.")
-            error.status = 400
-
-            throw error
-        }
-
-        const user = await UserModel.findByCredentials(email, password)
-
-        if (!user) {
-            const error = new Error("No email/password match.")
-            error.status = 400
-
-            throw error
-        }
-
-        const token = await JWTAuthMiddleware({ id: user._id })
-
-        res.status(200).send({ token })
-    } catch (error) {
-        next(error)
-    }
-
-})
+// Register
 
 authRouter.post("/register", async (req, res, next) => {
-    try {
-        const newUser = await new UserModel(req.body).save();
-        delete newUser._doc.password
+  try {
+    const user = new UserModel(req.body);
+    const { _id } = await user.save();
 
-        const token = await generateJwt({ id: newUser._id })
-
-        res.send({ newUser, token })
-    } catch (error) {
-        console.log({ error });
-        res.send(500).send({ message: error.message });
-    }
+    res.status(201).send({ _id });
+  } catch (error) {
+    res.status(500).json(error);
+  }
 });
 
-export default authRouter
+// Login
+
+authRouter.post("/login", async (req, res, next) => {
+  try {
+    // 1. Obtain credentials from req.body
+    const { email, password } = req.body;
+
+    // 2. Verify credentials
+    const user = await UserModel.checkCredentials(email, password);
+
+    if (user) {
+      // 3. If credentials are fine we are going to generate an access token and send it as a response
+      const { accessToken, refreshToken } = await JWTAuthenticate(user<User>);
+      
+      res.send({ email, accessToken, refreshToken });
+    } else {
+      // 4. If they are not --> error (401)
+      next(createHttpError(401, "Credentials are not ok!"));
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+authRouter.post("/refreshToken", async (req, res, next) => {
+  try {
+    // 1. Receive the current refresh token in req.body
+    const { currentRefreshToken } = req.body;
+
+    // 2. Check the validity of that token (check if token is not expired, check if it hasn't been compromised, check if it is in user's record in db)
+    const { accessToken, refreshToken } =
+      await verifyRefreshTokenAndGenerateNewTokens(currentRefreshToken);
+
+    // 3. If everything is fine --> generate a new pair of tokens (accessToken2 and refreshToken2)
+    // 4. Send tokens back as a response
+    res.send({ accessToken, refreshToken });
+  } catch (error) {
+    next(error);
+  }
+});
+
+export default authRouter;

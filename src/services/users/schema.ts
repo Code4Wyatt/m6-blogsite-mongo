@@ -11,7 +11,8 @@ const UserSchema = new Schema<User>(
     dateOfBirth: { type: Date, required: true },
     role: { type: String, enum: ["User", "Admin"], default: "User" },
     password: { type: String, required: true },
-    topics_covered: [String],
+        topics_covered: [String],
+    accessToken: { type: String}
   },
   {
     timestamps: true,

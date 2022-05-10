@@ -12,7 +12,7 @@ const UserSchema = new Schema<User>(
     role: { type: String, enum: ["User", "Admin"], default: "User" },
     password: { type: String, required: true },
         topics_covered: [String],
-    accessToken: { type: String}
+    checkCredentials: { type: Function, required: true }
   },
   {
     timestamps: true,

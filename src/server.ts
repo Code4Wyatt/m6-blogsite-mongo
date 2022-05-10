@@ -20,7 +20,7 @@ const whiteList = [process.env.FE_LOCAL_URL, process.env.FE_REMOTE_URL];
 const corsOptions = {
   origin: function (origin, next) {
     console.log(origin);
-    if (!origin || whiteList.indexOf(origin) !== -1) {
+    if (!origin || whiteList.indexOf(origin)) {
       next(null, true);
     } else {
       next(new Error("Not allowed by CORS"));
@@ -36,7 +36,7 @@ passport.use("google", googleStrategy)
 
 // Middlewares //
 
-server.use(cors(corsOptions));
+server.use(cors());
 server.use(express.json());
 server.use(passport.initialize());
 

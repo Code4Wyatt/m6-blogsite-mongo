@@ -88,7 +88,6 @@ usersRouter.get("/:userId", basicAuthMiddleware, async (req, res, next) => {
 
 // Get User Stories
 
-
 usersRouter.get("/me/posts", basicAuthMiddleware, async (req, res, next) => {
     try {
       const userId = req.params.userId;
@@ -146,6 +145,16 @@ usersRouter.post("/login", async (req, res, next) => {
     }
   } catch (error) {
     next(error);
+  }
+});
+
+usersRouter.get("/currentUser/:email", JWTAuthMiddleware, async (req, res, next) => {
+  try {
+    const email = req.params.email;
+    let currentUser = await UsersModel.findOne({ email: email });
+    res.status(200).send({ currentUser });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
   }
 });
 
